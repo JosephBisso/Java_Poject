@@ -1,0 +1,27 @@
+Game: Magic
+Card: Gigantosaurus
+Card: Endraze Forerunners
+Card: Colossal Dreadmaw
+Card: Kogla the Titan Ape
+Card: Aggressive Mammoth
+Property: power | integer
+Property: toughness | integer
+Property: mana | integer
+GameRuleInteger: power | >
+GameRuleInteger: toughness | >
+GameRuleInteger: mana | <
+CardProperty: Gigantosaurus | power | 10
+CardProperty: Gigantosaurus | toughness | 10
+CardProperty: Gigantosaurus | mana | 5
+CardProperty: Endraze Forerunners | power | 7
+CardProperty: Endraze Forerunners | toughness | 7
+CardProperty: Endraze Forerunners | mana | 8
+CardProperty: Colossal Dreadmaw | power | 6
+CardProperty: Colossal Dreadmaw | toughness | 6
+CardProperty: Colossal Dreadmaw | mana | 6
+CardProperty: Kogla the Titan Ape | power | 7
+CardProperty: Kogla the Titan Ape | toughness | 6
+CardProperty: Kogla the Titan Ape | mana | 6
+CardProperty: Aggressive Mammoth | power | 8
+CardProperty: Aggressive Mammoth | toughness | 8
+CardProperty: Aggressive Mammoth | mana | 6

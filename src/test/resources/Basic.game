@@ -1,0 +1,9 @@
+Game: Basic Game
+Card: One
+Card: Two
+Card: Three
+Property: color | string
+CardProperty: One | color | red
+CardProperty: Two | color | red
+CardProperty: Three | color | black
+GameRuleString: color | red | black

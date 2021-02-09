@@ -1,0 +1,11 @@
+Game: SSP
+Card: Schere
+Card: Stein
+Card: Papier
+Property: name | string
+CardProperty: Schere | name | scissor
+CardProperty: Stein | name | stone
+CardProperty: Papier | name | paper
+GameRuleString: name | scissor | paper
+GameRuleString: name | paper | stone
+GameRuleString: name | stone | scissor

@@ -1,0 +1,7 @@
+Mit dem Öffnen der Klausuraufgaben bestätigen Sie, dass Sie sich geistig und körperlich in der Lage befinden, die Prüfung abzulegen (d.h. prüffähig sind). Durch Einreichen ihres Rechnerprogrammes auf unserem Abgabeserver bestätigen Sie, dass Sie die oben bezeichnete Prüfung selbstständig und ohne unzulässige fremde Hilfe sowie ohne Heranziehung nicht zugelassener Hilfsmittel bearbeitet haben. Sie bestätigen, dass Ihnen bewusst ist, dass der Verstoß gegen prüfungsrechtliche Regelungen über die Täuschung bei der Erbringung von Prüfungsleistungen nach § 11 Abs. 4 APO als Täuschungsversuch gewertet wird und damit zum Nichtbestehen der Prüfung führt. In besonders schweren Fällen z.B. bei Plagiaten oder bei organisiertem Zusammenwirken mehrerer Personen kann der Prüfungsausschuss zusätzlich das endgültigen Nichtbestehen der Prüfung und damit das Scheitern im Studiengang feststellen.
+
+Vorname:
+Nachname:
+Matrikelnummer:
+Studiengang:
+Geplanter Abschluss:
