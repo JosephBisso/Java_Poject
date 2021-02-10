@@ -1,22 +1,22 @@
 package student;
 
-private class Eigenschaft  {
+public class Eigenschaft  {
 	
 	private String name;
 	private String typ;
 	private Regel[] regel;
-	private anzRegel = 0;
+	private int anzRegel = 0;
 
 	public Eigenschaft(String name, String typ) {
 		this.name = name;
 		this.typ = typ;
 	}
 
-	public string getName() {
+	public String getName() {
 		return this.name;
 	}
 	
-	public string getTyp() {
+	public String getTyp() {
 		return this.typ;
 	}
 	

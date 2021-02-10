@@ -1,6 +1,6 @@
 package student;
 
-private class Regel  {
+public class Regel  {
 	
 	private String nameEigenschaft;
 	private String operation;
@@ -34,17 +34,17 @@ private class Regel  {
 		this.losingName = losingName;
 	}
 	
-	public getLosingName() {
+	public String getLosingName() {
 		return losingName;
 	}
 	
-	public Regel(String, propertyName, String operation) {
+	public Regel(String propertyName, String operation) {
 		nameEigenschaft = propertyName;
 		this.operation = operation;
 		istString = false;
 	}
 	
-	public Regel(String, propertyName, String winningName, String losingName) {
+	public Regel(String propertyName, String winningName, String losingName) {
 		nameEigenschaft = propertyName;
 		this.winningName = winningName;
 		this.losingName = losingName;

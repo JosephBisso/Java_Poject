@@ -1,17 +1,17 @@
 package student;
 
-private class Karte  {
+public class Karte  {
 	
 	private String name;
 	private Eigenschaft[] property;
 	private int anzEigenschaft = 0;
-	private string[] value;
+	private String value;
 
 	public void setName(String name) {
 		this.name = name;
 	}
 	
-	public string getName() {
+	public String getName() {
 		return this.name;
 	}
 	
@@ -38,6 +38,6 @@ private class Karte  {
 	}
 	
 	public String[] getValue() {
-		return value.spilt(",");
+		return value.split(",");
 	}
 }
