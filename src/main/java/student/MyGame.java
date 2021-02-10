@@ -1,6 +1,8 @@
 package student;
 
 // Erlaubte Pakete: java.lang, java.io, java.nio, java.util und org.junit;
+import java.io.PrintWriter;
+import java io.IOException;
 
 import ias.Deck;
 import ias.Factory;
@@ -11,11 +13,12 @@ public class MyGame implements Game, Deck {
 	
 	public String name;
 	public Karte[] card;
-	private static int anzCard = 0;
+	private int anzCard = 0;
 	public Eigenschaft[] property;
-	private static int anzProperty = 0;
+	private int anzProperty = 0;
 	public Regel[] rule;
-	private static int anzRule = 0;
+	private int anzRule = 0;
+	private int anzStringRegel = 0;
 	public path;
 	
 	public static MyGame(String name) throws GameException {
@@ -54,7 +57,7 @@ public class MyGame implements Game, Deck {
 	}
 
     public void defineProperty(String name, String type) throws GameException {
-		if (!type.equals("string") | !type.equals("integer")) {
+		if (!type.equals("string") & !type.equals("integer")) {
 			throw new GameException("Der eingegebe Eigenschaftentyp ist ungültig");
 			return;
 		}
@@ -83,10 +86,12 @@ public class MyGame implements Game, Deck {
     public void setProperty(String cardName, String propertyName, String value) throws GameException {
 		for (int i = 0; i < anzCard; i++) {
 			if (card[i].getName().equals("cardName")) {
-				if (card[i].getProperty().getName().equals(propertyName)) {
-					throw new GameException("Die eingegebene Eigenschaft ist bereits der eingegebenen Karte "
+				for (int k = 0; k < card[i].getProperty().length) {
+					if (card[i].getProperty()[k].getName().equals(propertyName)) {
+						throw new GameException("Die eingegebene Eigenschaft ist bereits der eingegebenen Karte "
 											+ "zugeordnet worden");
-					return;
+						return;
+					}
 				}
 			}
 		}
@@ -113,10 +118,12 @@ public class MyGame implements Game, Deck {
     public void setProperty(String cardName, String propertyName, int value) throws GameException {
 		for (int i = 0; i < anzCard; i++) {
 			if (card[i].getName().equals("cardName")) {
-				if (card[i].getProperty().getName().equals(propertyName)) {
-					throw new GameException("Die eingegebene Eigenschaft ist bereits der eingegebenen Karte "
+				for (int k = 0; k < card[i].getProperty().length) {
+					if (card[i].getProperty()[k].getName().equals(propertyName)) {
+						throw new GameException("Die eingegebene Eigenschaft ist bereits der eingegebenen Karte "
 											+ "zugeordnet worden");
-					return;
+						return;
+					}
 				}
 			}
 		}
@@ -143,12 +150,34 @@ public class MyGame implements Game, Deck {
 		for (int i = 0; i < anzProperty; i++) {
 			if (property[i].getName().equals(propertyName)) {
 				if (property[i].getTyp().equals("integer")) {
-					if (!operation.equals(">") | !operation.equals("<")) {
+					if (!operation.equals(">") & !operation.equals("<")) {
 						throw new GameException("Die eingegebene Operation nicht nicht erlaubt");
 						return;
 					}
-					property[i].setRegel(operation);
+					if (property[i].getRegel().length != 0 
+							& !property[i].getRegel()[0].getOperation().equals(operation)) {
+						throw new GameException("Die eingegebe Operation widerspricht die bereits existieren");
+						return;
+					}
+					if (anzRule > 0) {
+						Regel[] zwischenLage = new Regel[anzRule];
+						for (int i = 0; i < anzRule; i++) {
+							zwischenLage[i] = rule[i];
+						} 
+						rule = new Regel[++anzRule];
+						for (int i = 0; i < anzRule - 1; i++) {
+							rule[i] = zwischenLage[i];
+						}					
+					}
+					if (anzRule == 0) {
+						rule = new Regel[++anzRule];
+					}
+		
+					rule[anzRule - 1] = new Regel(propertyName, operation);
+					property[i].setRegel(rule[anzRule -1]);
 				}
+				throw new GameException("Für diese Eigenschaft muss Gewinner und Verlierer angegeben werden");
+				return;
 			}
 		}
 	}
@@ -156,21 +185,180 @@ public class MyGame implements Game, Deck {
 		if (winningName.equals(losingName)) {
 			throw new GameException("Ein Karte kann sich nicht selbst schlagen");
 		}
+		
 		for (int i = 0; i < anzProperty; i++) {
 			if (property[i].getName().equals(propertyName)) {
 				if (!property[i].getTyp().equals("string")) {
-					throw new GameException("Die eingegebene Operation nicht nicht erlaubt");
+					throw new GameException("Für die Eigenschaft muss eine Operationangegeben werden");
 					return;
 				}
-				property[i].setRegel(winningName, losingName);
+
+				for (int j = 0; j < property[i].getRegel().length; j++) {
+					if (property[i].getRegel()[j].getWinningName().equals(winningName)
+							& property[i].getRegel()[j].getLosingName().equals(losingName)) {
+						throw new GameException("Die erfasste Regel existiert bereits");
+						return;
+					}
+				}
+				if (anzRule > 0) {
+						Regel[] zwischenLage = new Regel[anzRule];
+						for (int i = 0; i < anzRule; i++) {
+							zwischenLage[i] = rule[i];
+						} 
+						rule = new Regel[++anzRule];
+						for (int i = 0; i < anzRule - 1; i++) {
+							rule[i] = zwischenLage[i];
+						}					
+					}
+					if (anzRule == 0) {
+						rule = new Regel[++anzRule];
+					}
+		
+				rule[anzRule - 1] = new Regel(propertyName, winningName, losingName);
+				property[i].setRegel(rule[anzRule -1]);
 			}	
 		}
 	}
 
-    public String[] get(String type, String name) throws GameException;
+    public String[] get(String type, String name) throws GameException {
+		if (!type.equals("game") & !type.equals("card") & !type.equals("property") & !type.equals("rule")) {
+			throw new GameException("Der eingegebene Datentyp ist nicht erlaubt");
+			return null;
+		}
+		if ((name.contains("*") & name.length() > 1) || name.length == 0 ) {
+			throw new GameException("Der angegebene Name ist nicht gültig");
+			return null;
+		}
+		
+		String[] stringReturn;
+		if (type.equals("card")) {
+			if (name.equals("*")) {
+				stringReturn = new String[anzCard];
+				for (int i = 0; i < anzCard; i++) {
+					stringReturn[i] = card[i].getName();
+				}
+				return stringReturn;
+			}
+			for (int i = 0; i < anzCard; i++) {
+				if (card[i].getName().equals(name)) {
+					stringReturn = new String[1];
+					stringReturn[0] = card[i].getName();
+					return stringReturn;
+				}
+				return stringReturn;
+			}
+		} else if (type.equals("property")){
+			if (name.equals("*")) {
+				stringReturn = new String[anzProperty];
+				for (int i = 0; i < anzProperty; i++) {
+					stringReturn[i] = property[i].getName();
+				}
+				return stringReturn;
+			}
+			for (int i = 0; i < anzProperty; i++) {
+				if (property[i].getName().equals(name)) {
+					stringReturn = new String[1];
+					stringReturn[0] = property[i].getName();
+					return stringReturn;
+				}
+				return stringReturn;
+			}
+		} else if (type.equals("rule") {
+			
+			if (name.equals("*")) {
+				stringReturn = new String[anzRule];
+				int counter = 0;
+				while(counter < anzRule) {
+					for (int j = 0; j < anzProperty; j++) {
+						for (int k = 0; k < property[j].getRegel().lenght; k++) {
+							stringReturn[i++] = property[j].printRegel()[k];
+						}
+					}
+				}
+				return stringReturn;
+			}
+			
+			String[] eigenschaftRegel;
+			if (name.contains("<")) {
+				eigenschaftRegel = name.split("<");
+				for (int i = 0; i < anzProperty; i++) {
+					if (property[i].getName().equals(eigenschaftRegel[0])) {
+						if (property[i].getRegel()[0].getOperation() == "<") {
+							return property[i].printRegel();
+						}
+						return stringReturn;
+					}
+					return stringReturn;
+				}
+			}
+			if (name.contains(":")) {
+				eigenschaftRegel = new String[3];
+				String [] zwischenString1 = name.split(":");
+				String [] zwischenString2 = zwischenString1[1].split(">");
+				eigenschaftRegel[0] = zwischenString1[0];
+				eigenschaftRegel[1] = zwischenString2[0];
+				eigenschaftRegel[2] = zwischenString2[1];
+				
+				for (int i = 0; i < anzProperty; i++) {
+					if (property[i].getName().equals(eigenschaftRegel[0])) {
+						for (int j = 0; j < property[i].getRegel().length; j++) {
+							if (property[i].getRegel()[j].getWinningName().equals(eigenschaftRegel[1]) 
+									&& property[i].getRegel()[j].getLosingName().equals(eigenschaftRegel[2]) {
+								return property[i].printRegel();
+							}
+							return stringReturn;
+						}
+					}
+					return stringReturn;
+				}
+			} else {
+				eigenschaftRegel = name.split(">");
+				for (int i = 0; i < anzProperty; i++) {
+					if (property[i].getName().equals(eigenschaftRegel[0])) {
+						if (property[i].getRegel()[0].getOperation() == ">") {
+							return property[i].printRegel();
+						}
+						return stringReturn;
+					}
+					return stringReturn;
+				}
+			}
+		} else if (type.equals("game")) {
+			//Fehlt 
+		}
+		
+	}
 
-    public void saveToFile(String path) throws GameException;
-    public Deck createDeck();
+    public void saveToFile(String path) throws GameException {
+		try (PrintWriter writer = new PrintWriter(path)) {
+			writer.printf("Game: %s", name);
+			for (int i = 0; i < anzCard; i++) {
+				writer.printf("Card: %s", card[i].getName());
+				for (int j = 0; j < card[i].getProperty().length; j++) {
+					writer.printf("Property: %s | %s", card[i].getProperty()[j].getName(), card[i].getProperty()[j].getTyp());
+				}
+				for (int j = 0; j < card[i].getProperty().length; j++) {
+					writer.printf("CardProperty: %s | %s | %s", card[i].getName(), card[i].getProperty()[j].getName()
+									, card[i].getValue[j]);
+				}
+				for (int j = 0; j < anzRule; j++) {
+					if(!rule[j].istString()) {
+						writer.printf("GameRuleInteger: %s | %s", rule[j].getName(), rule[j].getOperation());
+					}
+				}
+				for (int j = 0; j < anzRule; j++) {
+					if(rule[j].istString()) {
+						writer.printf("GameRuleString: %s | %s | %s", rule[j].getName(), rule[j].getWinningName(), rule[j].getLosingName());
+					}
+				}
+			}
+		} catch (IOException ioe) {
+			throw new GameException(ioe.getMessage());
+		}
+	}
+    public Deck createDeck() {
+		return deck = new Deck()
+	}
 	
 	//Aus Interface Deck
 	
