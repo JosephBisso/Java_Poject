@@ -12,7 +12,7 @@ import ias.Factory;
 import ias.Game;
 import ias.GameException;
 
-public class MyGame implements Game, Deck {
+public class MyGame implements Game{
 	
 	public String name;
 	public Karte[] card;
@@ -22,7 +22,21 @@ public class MyGame implements Game, Deck {
 	public Regel[] rule;
 	private int anzRule = 0;
 	public String path;
+	public KartenDeck[] deck;
+	private int anzDeck = 0;
 
+	
+	public Karte[] getCard() {
+		return card;
+	}
+	
+	public Eigenschaft[] getProperty() {
+		return property;
+	}
+	
+	public Regel[] getRule() {
+		return rule;
+	}
 	
 	public MyGame(String name) throws GameException {
 		this.name = name;
@@ -140,7 +154,6 @@ public class MyGame implements Game, Deck {
 			for (int i = 0; i < anzCard; i++) {
 				if (card[i].getName().equals(name)) {
 					throw new GameException("Diese Karte ist bereits definiert worden");
-					
 				}
 			}
 			
@@ -494,29 +507,21 @@ a:		if (anzRule >= 1 && anzCard > 1) {
 	}
 	
     public Deck createDeck() {
-		return null;
-	}
-	
-	//Aus Interface Deck
-	
-	public void addCard(String cardName) throws GameException {
+		if (anzDeck > 0) {
+			KartenDeck[] zwischenLage = new KartenDeck[anzDeck];
+			for (int i = 0; i < anzDeck; i++) {
+				zwischenLage[i] = deck[i];
+			} 
+			deck = new KartenDeck[++anzDeck];
+			for (int i = 0; i < anzDeck - 1; i++) {
+				deck[i] = zwischenLage[i];
+			}
+		} else {
+			deck = new KartenDeck[++anzDeck];
+		}
 		
+		deck[anzDeck -1] = new KartenDeck(this);
+		return deck[anzDeck - 1];
 	}
 
-    public String[] getAllCards() {
-		return null;
-	}
-
-    public String[] getMatchingCards(String propertyName, int value) throws GameException {
-		return null;
-	}
-    public String[] getMatchingCards(String propertyName, String value) throws GameException {
-		return null;
-	}
-
-    public String[] selectBeatingCards(String opponentCard) throws GameException {
-		return null;
-	}
-	
-	
 }

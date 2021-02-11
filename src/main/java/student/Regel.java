@@ -51,4 +51,12 @@ public class Regel  {
 		istString = true;
 	}
 	
+	public String[] toStringArray() {
+		if (!istString) {
+			String stringReturn = nameEigenschaft + "," + operation;
+			return stringReturn.split(",");
+		}
+		String stringReturn = nameEigenschaft + "," + winningName + "," + losingName;
+		return stringReturn.split(",");
+	}
 }
