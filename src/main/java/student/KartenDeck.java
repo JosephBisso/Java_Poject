@@ -136,52 +136,61 @@ public class KartenDeck implements Deck {
 		if (myGame.getRule() == null) {
 			throw new GameException("Es sind noch keine Regeln vorhanden");
 		}
+		if (opponentCard.isEmpty()) {
+			throw new GameException("Es ist keine zu schlagende karte eigegebene worden");
+		}
+		int counter = 0;
+		Karte gegnerKarte = new Karte ("DummiName");
+		for (Karte karte : myGame.getCard()) {
+			if (karte.getName().equals(opponentCard)) {
+				gegnerKarte = karte;
+			}
+		}
 		String stringReturn = "";
-		boolean found = false;
+		String winner = "";
 		for (Regel regel : myGame.getRule()) {
-			int counter = 0;
-			if (regel.istString() && regel.getLosingName().equals(opponentCard)) {
-				counter++;
-				for (Regel rules : myGame.getRule()) {
-					if(rules.getWinningName().equals(opponentCard) && rules.getLosingName().equals(regel.getWinningName())) {
-						counter--;
-					}
+			for (String wert : gegnerKarte.getValue()) {
+				if (regel.istString() && regel.getLosingName().equals(wert)) {
+					counter++;
+					winner = regel.getWinningName();
 				}
-				if (counter > 0) {
-					stringReturn += regel.getName();
+				if (regel.istString() && regel.getWinningName().equals(wert) && regel.getLosingName().equals(winner)) {
+					counter--;
 				}
-			}
-			if (!regel.istString() && regel.getOperation().equals("<")) {
-				counter++;
-				for (Regel rules : myGame.getRule()) {
-					if(!rules.istString() && rules.getOperation().equals(">")) {
-						counter--;
-					}
-					if (counter > 0) {
-						stringReturn += rules.getName();
-					}
+				if (!regel.istString() && !regel.getOperation().equals(">")) {
+					counter++;
 				}
 			}
-		}
-		if (stringReturn.contains(opponentCard)) {
-			stringReturn = stringReturn.replaceAll(opponentCard, "");
-			if (stringReturn.equals("")) {
-				return new String[0];
+			if (counter > 0) {
+				for (Eigenschaft eigenschaft : myGame.getProperty()) {
+					if (eigenschaft.getName().equals(regel.getName())) {
+						for (Karte karte : card) {
+							for (Eigenschaft kartenEigenschaft : karte.getProperty()) {
+								for (String wert : karte.getValue()) {
+									if (kartenEigenschaft.getTyp().equals("string") 
+											&& kartenEigenschaft.getName().equals(regel.getName()) && wert.equals(winner)) {
+										
+										if (!stringReturn.contains(karte.getName())) {
+											stringReturn += karte.getName() + ",";											
+										}
+									}
+									if (kartenEigenschaft.getTyp().equals("integer") 
+											&& kartenEigenschaft.getName().equals(regel.getName())) {
+												
+										stringReturn += karte.getName() + ",";
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 		
-		String beatingCards = "";
-		for (Karte karte : card) {
-			if (stringReturn.contains(karte.getName())) {
-				beatingCards += karte.getName();
-			}
-		}
-		
-		if (beatingCards.equals("")) {
+		if (stringReturn.isEmpty()) {
 			return new String[0];
 		}
-		
-		return beatingCards.split(",");
+		return stringReturn.split(",");
 	}
 
 }
