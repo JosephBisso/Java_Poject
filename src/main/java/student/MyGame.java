@@ -3,6 +3,9 @@ package student;
 // Erlaubte Pakete: java.lang, java.io, java.nio, java.util und org.junit;
 import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import ias.Deck;
 import ias.Factory;
@@ -19,13 +22,113 @@ public class MyGame implements Game, Deck {
 	public Regel[] rule;
 	private int anzRule = 0;
 	public String path;
+
 	
-	public  MyGame(String name) throws GameException {
- 
+	public MyGame(String name) throws GameException {
+		this.name = name;
     }
 	
 	public static Game loadGame(String path) throws GameException {
-		return null;
+		File file = new File(path);
+		MyGame myGame = new MyGame("");
+		int counter = 0;
+		try (Scanner scanner = new Scanner(file)) {
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				String[] sLine = line.split("\\: ");
+				sLine[1] = sLine[1];
+				if (counter++ == 0) {
+					if (sLine[0].equals("Game")) {
+						myGame = new MyGame(sLine[1]);
+					} else {
+						throw new GameException("Es fehlt die Definition (Name) des Spiels");
+					}
+				}  
+				if (sLine[0].equals("Card")) {
+					myGame.defineCard(sLine[1]);
+				}
+				if (sLine[0].equals("Property")) {
+					String[] sProperty = sLine[1].split(" \\| ");
+					myGame.defineProperty(sProperty[0], sProperty[1]);
+				}
+				if (sLine[0].equals("CardProperty")) {
+					String[] sCardProperty = sLine[1].split(" \\| ");
+					boolean found = false;
+					for (Karte karte : myGame.card) {
+						if (karte == null) {
+							throw new GameException("Das Spiel besitzt noch keine einzige Karte");
+						}
+						if (karte.getName().equals(sCardProperty[0])) {
+							for (Eigenschaft eigenschaft : myGame.property) {
+								if (eigenschaft == null) {
+									throw new GameException("Diese Eigenschaft wurde noch nicht definiert");
+								}
+								if (sCardProperty[2].isEmpty()) {
+									throw new GameException("Es fehlt ein Wert für diese Karteneigenschaft");
+								}
+								if (eigenschaft.getName().equals(sCardProperty[1])) {
+									try {
+										myGame.setProperty(sCardProperty[0], sCardProperty[1], Integer.parseInt(sCardProperty[2]));
+									} catch (NumberFormatException e) {
+										myGame.setProperty(sCardProperty[0], sCardProperty[1], sCardProperty[2]);
+									} finally {
+										found = true;
+									}
+								}
+							}
+						}
+					}
+					if (!found) {
+						throw new GameException("Die Karte dieser Eigenschaft wurde noch nicht definiert");
+					}
+				}
+				if (sLine[0].equals("GameRuleInteger")) {
+					String[] sCardRule = sLine[1].split(" \\| ");
+					boolean found = false;
+					for (Eigenschaft eigenschaft : myGame.property) {
+						if (eigenschaft.getName().equals(sCardRule[0])) {
+							if (!eigenschaft.getTyp().equals("integer")) {
+								throw new GameException("Die Eigenschaft dieser Regel wurde nicht als Integer-Rgel definiert");
+							}
+							if (!sCardRule[1].equals(">") && !sCardRule[1].equals("<")) {
+								throw new GameException("Der Wert dieser Regel ist für Integer-Regel nicht gültig");
+							}
+							myGame.defineRule(sCardRule[0], sCardRule[1]);
+							found = true;
+						}
+					}
+					if (!found) {
+						throw new GameException("Diese Eigenschaft wurde noch nicht definiert");
+					}
+				}
+				if (sLine[0].equals("GameRuleString")) {
+					String[] sCardRule = sLine[1].split(" \\| ");
+					boolean found = false;
+					for (Eigenschaft eigenschaft : myGame.property) {
+						if (eigenschaft.getName().equals(sCardRule[0])) {
+							if (!eigenschaft.getTyp().equals("string")) {
+								throw new GameException("Die Eigenschaft dieser Regel wurde nicht als String-Regel definiert");
+							}
+							if (sCardRule[1].isEmpty() || sCardRule[2].isEmpty()) {
+								throw new GameException("Es müssen für diese Regel sowohl ein winning- als auch ein losingName eigegeben werden");
+							}
+							if (sCardRule[1].equals(">") && sCardRule[2].equals("<")) {
+								throw new GameException("Der Wert dieser Regel ist für String-Regel nicht gültig");
+							}
+							myGame.defineRule(sCardRule[0], sCardRule[1], sCardRule[2]);
+							found = true;
+						}
+					}
+					if (!found) {
+						throw new GameException("Diese Eigenschaft wurde noch nicht definiert");
+					}
+				}
+			}
+			return ((Game)myGame);
+			
+		} catch (FileNotFoundException e) {
+			throw new GameException("Die Datei konnte nicht geöffnet werden");
+		}
     }
 	
 	//aus Interface Game
@@ -54,7 +157,7 @@ public class MyGame implements Game, Deck {
 	}
 
     public void defineProperty(String name, String type) throws GameException {
-		if (!type.equals("string") & !type.equals("integer")) {
+		if (!type.equals("string") && !type.equals("integer")) {
 			throw new GameException("Der eingegebe Eigenschaftentyp ist ungültig");
 			
 		}
@@ -154,13 +257,13 @@ public class MyGame implements Game, Deck {
 		for (int i = 0; i < anzProperty; i++) {
 			if (property[i].getName().equals(propertyName)) {
 				if (property[i].getTyp().equals("integer")) {
-					if (!operation.equals(">") & !operation.equals("<")) {
+					if (!operation.equals(">") && !operation.equals("<")) {
 						throw new GameException("Die eingegebene Operation nicht nicht erlaubt");
 						
 					}
 					if(property[i].getRegel() != null) {
 						if (property[i].getRegel().length != 0 
-								& !property[i].getRegel()[0].getOperation().equals(operation)) {
+								&& !property[i].getRegel()[0].getOperation().equals(operation)) {
 							throw new GameException("Die eingegebe Operation widerspricht die bereits existieren");
 						}
 					}
@@ -217,7 +320,7 @@ a:		if (anzRule >= 1 && anzCard > 1) {
 				if (property[i].getRegel() != null) {
 					for (int j = 0; j < property[i].getRegel().length; j++) {
 						if (property[i].getRegel()[j].getWinningName().equals(winningName)
-								& property[i].getRegel()[j].getLosingName().equals(losingName)) {
+								&& property[i].getRegel()[j].getLosingName().equals(losingName)) {
 							throw new GameException("Die erfasste Regel existiert bereits");
 						
 						}
@@ -244,11 +347,11 @@ a:		if (anzRule >= 1 && anzCard > 1) {
 	}
 
     public String[] get(String type, String name) throws GameException {
-		if (!type.equals("game") & !type.equals("card") & !type.equals("property") & !type.equals("rule")) {
+		if (!type.equals("game") && !type.equals("card") && !type.equals("property") && !type.equals("rule")) {
 			throw new GameException("Der eingegebene Datentyp ist nicht erlaubt");
 			
 		}
-		if ((name.contains("*") & name.length() > 1) || name.length() == 0 ) {
+		if ((name.contains("*") && name.length() > 1) || name.length() == 0 ) {
 			throw new GameException("Der angegebene Name ist nicht gültig");
 			
 		}
@@ -316,7 +419,7 @@ a:		if (anzRule >= 1 && anzCard > 1) {
 			}
 			if (name.contains(":")) {
 				eigenschaftRegel = new String[3];
-				String [] zwischenString1 = name.split(":");
+				String [] zwischenString1 = name.split(": ");
 				String [] zwischenString2 = zwischenString1[1].split(">");
 				eigenschaftRegel[0] = zwischenString1[0];
 				eigenschaftRegel[1] = zwischenString2[0];
@@ -370,7 +473,6 @@ a:		if (anzRule >= 1 && anzCard > 1) {
 					}
 				}
 			}
-			
 			if (rule != null) {
 				for (int j = 0; j < anzRule; j++) {
 					if(!rule[j].istString()) {
@@ -388,6 +490,7 @@ a:		if (anzRule >= 1 && anzCard > 1) {
 			throw new GameException(ioe.getMessage());
 		}
 	}
+	
     public Deck createDeck() {
 		return null;
 	}

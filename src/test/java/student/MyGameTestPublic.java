@@ -19,11 +19,11 @@ public class MyGameTestPublic {
 
     @TempDir
     File tempDir;
-    private MyGame game;
+    private Game game;
 
     @BeforeEach
     public void createGame() throws GameException {
-        game = new MyGame("Test");
+        game = Factory.createGame("Test");
     }
 
     @Test
@@ -31,8 +31,6 @@ public class MyGameTestPublic {
         game.defineCard("Card 1");
         game.defineCard("Card 2");
         game.defineCard("Card 3");
-		
-		assertEquals(game.card.length, 3);
     }
 
     @Test
@@ -78,7 +76,6 @@ public class MyGameTestPublic {
 		game.setProperty("One", "power", 10);
 		game.defineCard("Two");
 		game.defineCard("Three");
-		assertEquals(game.card.length, 3);
         game.setProperty("Two", "power", 20);
         game.setProperty("Three", "power", 30);
 		
@@ -89,7 +86,6 @@ public class MyGameTestPublic {
         game.defineCard("One");
 		game.defineCard("Two");
 		game.defineCard("Three");
-		assertEquals(game.card.length, 3);
 		game.setProperty("One", "farbe", "rot");
 		game.defineProperty("farbe", "string");
         game.setProperty("Two", "farbe", "grün");
@@ -137,6 +133,8 @@ public class MyGameTestPublic {
         game.defineCard("Realm Cloaked Giant");
         game.defineProperty("height", "integer");
         game.defineProperty("race", "string");
+		game.defineRule("height", ">");
+		game.defineRule("race", "rot", "gelb");
         game.setProperty("Arbor Elf", "race", "elf");
         game.setProperty("Realm Cloaked Giant", "race", "giant");
         game.setProperty("Arbor Elf", "height", 4);
@@ -149,6 +147,15 @@ public class MyGameTestPublic {
         assertTrue(file.contains("CardProperty: Arbor Elf | height |"));
         assertTrue(file.contains("CardProperty: Realm Cloaked Giant | race |"));
         assertTrue(file.contains("CardProperty: Realm Cloaked Giant | height |"));
+    }
+	
+	@Test
+    public void saveToFile_withTestGame_savedFileCanBeLoadedAgain() throws GameException {
+        game = Factory.loadGame("C:\\Users\\bisso\\Downloads\\Test.game");
+        File targetFile = new File("C:\\Users\\bisso\\Downloads\\SaveLoadTest.game");
+        game.saveToFile("C:\\Users\\bisso\\Downloads\\SaveLoadTest.game");
+        //This does not check for correctness, only consistency
+        assertNotNull(Factory.loadGame(targetFile.getAbsolutePath()));
     }
 
 
