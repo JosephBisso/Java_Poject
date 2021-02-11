@@ -36,7 +36,9 @@ public class MyGame implements Game, Deck {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				String[] sLine = line.split("\\: ");
-				sLine[1] = sLine[1];
+				if (sLine[1].isEmpty()) {
+					throw new GameException("Es gibt keine Angabe in der Leine " + counter);
+				}
 				if (counter++ == 0) {
 					if (sLine[0].equals("Game")) {
 						myGame = new MyGame(sLine[1]);
