@@ -157,6 +157,17 @@ public class MyGameTestPublic {
         //This does not check for correctness, only consistency
         assertNotNull(Factory.loadGame(targetFile.getAbsolutePath()));
     }
+	
+	@Test
+    public void loadGame_withBasicFile_throwsAfterDefine() throws GameException {
+        Game game = Factory.loadGame("src/test/resources/Basic.game");
+        game.defineCard("Four");
+        game.defineCard("Five");
+		
+       assertThrows(GameException.class, () -> {
+            game.defineCard("Two");
+        });
+    }
 
 
 /**    @Test
