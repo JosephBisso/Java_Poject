@@ -201,15 +201,20 @@ public class KartenDeck implements Deck {
 							for (Eigenschaft kartenEigenschaft : karte.getProperty()) {
 								for (String wert : karte.getValue()) {
 									if (kartenEigenschaft.getTyp().equals("string") 
-										&& kartenEigenschaft.getName().equals(regel.getName()) 
+										&& kartenEigenschaft.getName()
+										.equals(regel.getName()) 
 										&& wert.equals(winner)) {
 										
-										if (!stringReturn.contains(karte.getName())) {
-											stringReturn += karte.getName() + ",";											
+										if (!stringReturn
+											.contains(karte.getName())) {
+											stringReturn += karte
+											.getName() 
+												+ ",";											
 										}
 									}
-									if (kartenEigenschaft.getTyp().equals("integer") 
-										&& kartenEigenschaft.getName().equals(regel.getName())) {
+									if (kartenEigenschaft.getTyp()
+										.equals("integer") && kartenEigenschaft
+										.getName().equals(regel.getName())) {
 												
 										stringReturn += karte.getName() + ",";
 									}
