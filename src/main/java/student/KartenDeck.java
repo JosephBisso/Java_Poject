@@ -89,7 +89,7 @@ public class KartenDeck implements Deck {
 			}
 		}
 		if (!foundProperty) {
-			return new String[0];
+			throw new GameException("Diese Eigenschaft wurde im Spiel (noch) nicht definiert");
 		}
 		if (!found) {
 			return new String[0];
@@ -123,7 +123,7 @@ public class KartenDeck implements Deck {
 			}
 		}
 		if (!foundProperty) {
-			return new String[0];
+			throw new GameException("Diese Eigenschaft wurde im Spiel (noch) nicht definiert");
 		}
 		if (!found) {
 			return new String[0];
@@ -186,7 +186,9 @@ public class KartenDeck implements Deck {
 				}
 			}
 		}
-		
+		if (stringReturn.contains(opponentCard)) {
+			stringReturn = stringReturn.replaceAll(opponentCard, "");
+		}
 		if (stringReturn.isEmpty()) {
 			return new String[0];
 		}

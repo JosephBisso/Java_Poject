@@ -172,8 +172,6 @@ public class MyGame implements Game{
 		}
     }
 	
-	//aus Interface Game
-	
 	public void defineCard(String name) throws GameException {
 		if (anzCard > 0) {
 			for (int i = 0; i < anzCard; i++) {
@@ -263,6 +261,19 @@ public class MyGame implements Game{
 	}
 	
     public void setProperty(String cardName, String propertyName, int value) throws GameException {
+		boolean found = false;
+		if (property == null) {
+			throw new GameException("Es kann keine Eigenschaft gesetzt werden, ohne zuvor eine Eigenschaft zu definieren");
+		}
+		for (Eigenschaft eigenschaft : property) {
+			if (eigenschaft.getName().equals(propertyName)) {
+				found = true;
+			}
+		}
+		if (!found) {
+			throw new GameException("Die Eigenschaft wurde noch nicht gefunden");
+		}
+		
 		for (int i = 0; i < anzProperty; i++) {
 			if (property[i].getName().equals(propertyName) && !property[i].getTyp().equals("integer")) {
 				throw new GameException("Der eingegebene Wert passt nicht zum Typ der eingegebenen Eigenschaft");
@@ -294,6 +305,18 @@ public class MyGame implements Game{
 	}
 
     public void defineRule(String propertyName, String operation) throws GameException {
+		boolean found = false;
+		if (property == null) {
+			throw new GameException("Es kann keine Regel angelegt werde, ohne zuvor eine Eigenschaft zu definieren");
+		}
+		for (Eigenschaft eigenschaft : property) {
+			if (eigenschaft.getName().equals(propertyName)) {
+				found = true;
+			}
+		}
+		if (!found) {
+			throw new GameException("Die Eigenschaft für diese Regel wurde nicht gefunden");
+		}
 		for (int i = 0; i < anzProperty; i++) {
 			if (property[i].getName().equals(propertyName)) {
 				if (property[i].getTyp().equals("integer")) {
@@ -334,22 +357,29 @@ public class MyGame implements Game{
 		if (winningName.equals(losingName)) {
 			throw new GameException("Ein Karte kann sich nicht selbst schlagen");
 		}
-
-/*		
-a:		if (anzRule >= 1 && anzCard > 1) {
+		
+		if (card != null) {
+			int counterCard = 0,
+				counterStringCard = 0;
 			for (Karte karte : card) {
-				if (karte.getRegel() == null) {
-					break a;
-				}
-				for(Regel regel : karte.getRegel()) {
-					if (!regel.istString()) {
-						break a;
-					} 
+				counterCard++;
+				if (karte.getProperty() != null) {
+					for (Eigenschaft eigenschaft : karte.getProperty()) {
+						if (eigenschaft.getRegel() != null) {
+							for (Regel regel : eigenschaft.getRegel()) {
+								if (regel.istString()) {
+									counterStringCard--;
+								}
+							}
+						}
+					}
 				}
 			}
+			if(counterCard > 2 && counterCard == counterStringCard) {
 			throw new GameException("Es können auch nur fur einen Teil der Karten String-Regeln angelegt werden");
+			}
 		}
-*/		
+		
  		for (int i = 0; i < anzProperty; i++) {
 			if (property[i].getName().equals(propertyName)) {
 				if (!property[i].getTyp().equals("string")) {
@@ -391,7 +421,7 @@ a:		if (anzRule >= 1 && anzCard > 1) {
 			throw new GameException("Der eingegebene Datentyp ist nicht erlaubt");
 			
 		}
-		if ((name.contains("\\*") && name.length() > 1) || name.length() == 0 ) {
+		if (!type.equals("game") && ((name.contains("*") && name.length() > 1) || name.length() == 0 )) {
 			throw new GameException("Der angegebene Name ist nicht gültig");
 			
 		}
