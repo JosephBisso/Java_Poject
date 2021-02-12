@@ -1,28 +1,44 @@
 package student;
 
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-
 import ias.Deck;
-import ias.Factory;
-import ias.Game;
 import ias.GameException;
 
+/** Klasse KartenDeck für die Interface Deck.
+*/
 public class KartenDeck implements Deck {
 	
-	public MyGame myGame;
+	private MyGame myGame;
 	private int anzCard = 0;
-	public Karte[] card;
-	public Eigenschaft[] property;
-	public Regel[] rule;
-	
+	private Karte[] card;
+	private Eigenschaft[] property;
+	private Regel[] rule;
+
+/** @param myGame gewünscht.
+*/
 	public KartenDeck(MyGame myGame) {
 		this.myGame = myGame;
 	}
-	
+
+/** @return myGame aus Klasse.
+*/	
+	public MyGame getMyGame() {
+		return this.myGame;
+	}
+
+/** @return property aus Klasse.
+*/		
+	public Eigenschaft[] property() {
+		return this.property;
+	} 
+
+/** @return card aus Klasse.
+*/	
+	public Karte[] card() {
+		return this.card;
+	} 
+
+/** @param cardName gewünscht.
+*/	
 	public void addCard(String cardName) throws GameException {
 		boolean found = false;
 		if (myGame.getCard() == null) {
@@ -39,19 +55,21 @@ public class KartenDeck implements Deck {
 					} 
 					card = new Karte[++anzCard];
 					for (int j = 0; j < anzCard - 1; j++) {
-					card[j] = zwischenLage[j];
+						card[j] = zwischenLage[j];
 					}
 				} else {
 					card = new Karte[++anzCard];
 				}
-				card[anzCard - 1] = myGame.getCard()[i] ;
+				card[anzCard - 1] = myGame.getCard()[i];
 			}
 		}
-		if(!found) {
+		if (!found) {
 			throw new GameException("Die eingegebene Karte existiert nicht im Spiel.");
 		}
 	}
 
+/** @return card aus Klasse als String.
+*/
     public String[] getAllCards() {
 		if (anzCard == 0) {
 			return new String[0];
@@ -63,6 +81,10 @@ public class KartenDeck implements Deck {
 		return stringReturn;
 	}
 
+/** @param propertyName gewünscht.
+*	@param value gewünscht
+*	@return gewünscht card
+*/
     public String[] getMatchingCards(String propertyName, int value) throws GameException {
 		String stringReturn = "";
 		boolean found = false,
@@ -71,14 +93,15 @@ public class KartenDeck implements Deck {
 		for (Eigenschaft eigenschaft : myGame.getProperty()) {
 			if (eigenschaft.getName().equals(propertyName)) {
 				foundProperty = true;
-				if(!eigenschaft.getTyp().equals("integer")) {
+				if (!eigenschaft.getTyp().equals("integer")) {
 					throw new GameException("Diese Eigenschaft wurde als Integer definiert");
 				}
 				for (Karte karte : card) {
 					for (Eigenschaft kartenEigenschaft : karte.getProperty()) {
 						for (String wert : karte.getValue()) {
 							if (kartenEigenschaft.getTyp().equals("integer") 
-									&& kartenEigenschaft.getName().equals(propertyName) && Integer.parseInt(wert) == value) {
+								&& kartenEigenschaft.getName().equals(propertyName) 
+										&& Integer.parseInt(wert) == value) {
 								
 								found = true;
 								stringReturn += karte.getName() + ",";
@@ -97,6 +120,11 @@ public class KartenDeck implements Deck {
 		
 		return stringReturn.split(",");
 	}
+	
+/** @param propertyName gewünscht.
+*	@param value gewünscht
+*	@return gewünscht card
+*/	
     public String[] getMatchingCards(String propertyName, String value) throws GameException {
 		String stringReturn = "";
 		boolean found = false,
@@ -105,14 +133,15 @@ public class KartenDeck implements Deck {
 		for (Eigenschaft eigenschaft : myGame.getProperty()) {
 			if (eigenschaft.getName().equals(propertyName)) {
 				foundProperty = true;
-				if(!eigenschaft.getTyp().equals("string")) {
+				if (!eigenschaft.getTyp().equals("string")) {
 					throw new GameException("Diese Eigenschaft wurde als string definiert");
 				}
 				for (Karte karte : card) {
 					for (Eigenschaft kartenEigenschaft : karte.getProperty()) {
 						for (String wert : karte.getValue()) {
 							if (kartenEigenschaft.getTyp().equals("string") 
-									&& kartenEigenschaft.getName().equals(propertyName) && wert.equals(value)) {
+								&& kartenEigenschaft.getName().equals(propertyName) 
+										&& wert.equals(value)) {
 								
 								found = true;
 								stringReturn += karte.getName() + ",";
@@ -132,6 +161,9 @@ public class KartenDeck implements Deck {
 		return stringReturn.split(",");
 	}
 
+/** @param opponentCard gewünscht.
+*	@return gewünscht card
+*/
     public String[] selectBeatingCards(String opponentCard) throws GameException {
 		if (myGame.getRule() == null) {
 			throw new GameException("Es sind noch keine Regeln vorhanden");
@@ -140,7 +172,7 @@ public class KartenDeck implements Deck {
 			throw new GameException("Es ist keine zu schlagende karte eigegebene worden");
 		}
 		int counter = 0;
-		Karte gegnerKarte = new Karte ("DummiName");
+		Karte gegnerKarte = new Karte("DummiName");
 		for (Karte karte : myGame.getCard()) {
 			if (karte.getName().equals(opponentCard)) {
 				gegnerKarte = karte;
@@ -154,7 +186,8 @@ public class KartenDeck implements Deck {
 					counter++;
 					winner = regel.getWinningName();
 				}
-				if (regel.istString() && regel.getWinningName().equals(wert) && regel.getLosingName().equals(winner)) {
+				if (regel.istString() && regel.getWinningName().equals(wert) 
+						&& regel.getLosingName().equals(winner)) {
 					counter--;
 				}
 				if (!regel.istString() && !regel.getOperation().equals(">")) {
@@ -168,14 +201,15 @@ public class KartenDeck implements Deck {
 							for (Eigenschaft kartenEigenschaft : karte.getProperty()) {
 								for (String wert : karte.getValue()) {
 									if (kartenEigenschaft.getTyp().equals("string") 
-											&& kartenEigenschaft.getName().equals(regel.getName()) && wert.equals(winner)) {
+										&& kartenEigenschaft.getName().equals(regel.getName()) 
+										&& wert.equals(winner)) {
 										
 										if (!stringReturn.contains(karte.getName())) {
 											stringReturn += karte.getName() + ",";											
 										}
 									}
 									if (kartenEigenschaft.getTyp().equals("integer") 
-											&& kartenEigenschaft.getName().equals(regel.getName())) {
+										&& kartenEigenschaft.getName().equals(regel.getName())) {
 												
 										stringReturn += karte.getName() + ",";
 									}

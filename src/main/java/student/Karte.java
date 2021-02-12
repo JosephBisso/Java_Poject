@@ -1,5 +1,7 @@
 package student;
 
+/** Klasse Karte.
+*/
 public class Karte  {
 	
 	private String name;
@@ -7,14 +9,22 @@ public class Karte  {
 	private int anzEigenschaft = 0;
 	private String value = "";
 
+/** @param name gewünscht.
+*/
 	public Karte(String name) {
 		this.name = name;
 	}
-	
+
+/** @return name aus Klasse.
+*/
 	public String getName() {
 		return this.name;
 	}
-	
+
+/** @param propertyName gewünscht.
+*	@param value gewünscht
+*	@param typ gewünscht
+*/	
 	public void setProperty(String propertyName, String value, String typ) {
 		if (anzEigenschaft > 0) {
 			Eigenschaft[] zwischenLage = new Eigenschaft[anzEigenschaft];
@@ -30,10 +40,14 @@ public class Karte  {
 			property = new Eigenschaft[++anzEigenschaft];
 		}
 		
-		property[anzEigenschaft - 1] = new Eigenschaft (propertyName, typ);
+		property[anzEigenschaft - 1] = new Eigenschaft(propertyName, typ);
 		this.value += value + ";";
 	}
-	
+
+/** @param propertyName gewünscht.
+*	@param value gewünscht
+*	@param typ gewünscht
+*/		
 	public void setProperty(String propertyName, int value, String typ) {
 		if (anzEigenschaft > 0) {
 			Eigenschaft[] zwischenLage = new Eigenschaft[anzEigenschaft];
@@ -49,19 +63,24 @@ public class Karte  {
 			property = new Eigenschaft[++anzEigenschaft];
 		}
 		
-		property[anzEigenschaft - 1] = new Eigenschaft (propertyName, typ);
+		property[anzEigenschaft - 1] = new Eigenschaft(propertyName, typ);
 		this.value += Integer.toString(value) + ";";
 	}
 	
-	
+/** @return property aus Klasse.
+*/	
 	public Eigenschaft[] getProperty() {
 		return this.property;
 	}
-	
+
+/** @return value aus Klasse.
+*/	
 	public String[] getValue() {
 		return value.split(";");
 	}
-	
+
+/** @return regel aus Klasse.
+*/	
 	public Regel[] getRegel() {
 		int counter = 0;
 		if (property == null) {
@@ -79,9 +98,9 @@ public class Karte  {
 		}
 		Regel[] regelReturn = new Regel[counter];
 		int m = 0;
-		while(m < counter) {
+		while (m < counter) {
 			for (int i = 0; i < property.length; i++) {
-				for(int j = 0; j < property[i].getRegel().length; j++) {
+				for (int j = 0; j < property[i].getRegel().length; j++) {
 					regelReturn[m++] = property[i].getRegel()[j]; 
 				}
 			}
