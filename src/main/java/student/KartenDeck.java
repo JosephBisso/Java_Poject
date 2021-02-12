@@ -171,6 +171,9 @@ public class KartenDeck implements Deck {
 		if (opponentCard.isEmpty()) {
 			throw new GameException("Es ist keine zu schlagende karte eigegebene worden");
 		}
+		if (myGame.getCard() == null) {
+			throw new GameException("Es sind kein Karte im Spiel definiert worden");
+		}
 		int counter = 0;
 		Karte gegnerKarte = new Karte("DummiName");
 		for (Karte karte : myGame.getCard()) {
@@ -180,18 +183,21 @@ public class KartenDeck implements Deck {
 		}
 		String stringReturn = "";
 		String winner = "";
+		String losingWert = "";
 		for (Regel regel : myGame.getRule()) {
 			for (String wert : gegnerKarte.getValue()) {
 				if (regel.istString() && regel.getLosingName().equals(wert)) {
 					counter++;
+					losingWert = wert;
 					winner = regel.getWinningName();
-				}
-				if (regel.istString() && regel.getWinningName().equals(wert) 
-						&& regel.getLosingName().equals(winner)) {
-					counter--;
 				}
 				if (!regel.istString() && !regel.getOperation().equals(">")) {
 					counter++;
+				}
+			}
+			for (Regel regel2 : myGame.getRule()) {
+				if (regel2.istString() && regel2.getWinningName().equals(losingWert) && regel2.getLosingName().equals(winner)) {
+					counter--;
 				}
 			}
 			if (counter > 0) {
@@ -207,9 +213,7 @@ public class KartenDeck implements Deck {
 										
 										if (!stringReturn
 											.contains(karte.getName())) {
-											stringReturn += karte
-											.getName() 
-												+ ",";											
+											stringReturn += karte.getName() + ",";											
 										}
 									}
 									if (kartenEigenschaft.getTyp()

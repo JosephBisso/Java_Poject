@@ -14,16 +14,21 @@ import ias.Deck;
 import ias.Factory;
 import ias.Game;
 import ias.GameException;
+import ias.TestUtil;
 
 public class MyGameTestPublic {
 
     @TempDir
     File tempDir;
     private Game game;
+	private Deck deck1;
+	private Deck deck2;
 
     @BeforeEach
     public void createGame() throws GameException {
         game = Factory.createGame("Test");
+		deck1 = game.createDeck();
+		deck2 = game.createDeck();
     }
 
     @Test
@@ -86,8 +91,8 @@ public class MyGameTestPublic {
         game.defineCard("One");
 		game.defineCard("Two");
 		game.defineCard("Three");
-		game.setProperty("One", "farbe", "rot");
 		game.defineProperty("farbe", "string");
+		game.setProperty("One", "farbe", "rot");
         game.setProperty("Two", "farbe", "grün");
         game.setProperty("Three", "farbe", "gelb");
 		
@@ -101,7 +106,17 @@ public class MyGameTestPublic {
             game.defineRule("zahl", "<");});
     }
 	
-/*	@Test
+	@Test
+    public void setProperty_withOutCardAndProperty_throws() throws GameException {
+        assertThrows(GameException.class, () -> { game.setProperty("Two", "farbe", "grün");});
+    }
+	
+	@Test
+    public void defineRule_withoutCardAndProperty_throws() throws GameException {
+        assertThrows(GameException.class, () -> { game.defineRule("zahl", "<");});
+    }
+/*	
+	@Test
     public void defineRule_withOnlyStringRuleForEveryCard_throws() throws GameException {
 		game.defineCard("One");
 		game.defineCard("Two");
@@ -110,21 +125,61 @@ public class MyGameTestPublic {
 		game.setProperty("One", "farbe", "rot");
 		game.setProperty("Two", "farbe", "schwarz");
 		game.setProperty("Three", "farbe", "blau");
-        game.defineRule("farbe", "rot", "schwarz");
+		game.defineRule("farbe", "blau", "rot");
         assertThrows(GameException.class, () -> {
-            game.defineRule("farbe", "blau", "rot");});
+            game.defineRule("farbe", "schwarz", "rot");});
     }
 */	
 	@Test
-    public void defineRule_withOnlyStringRule_doesNotthrows() throws GameException {
+    public void get_withInvalidCard_giveNothing() throws GameException {
 		game.defineCard("One");
-		game.defineCard("Two");
-		game.defineCard("Three");
-        game.defineProperty("farbe", "string");
-        game.defineRule("farbe", "rot", "schwarz");
-		game.defineRule("farbe", "schwarz", "blau");
-		game.setProperty("One", "farbe", "rot");
-		game.setProperty("Two", "farbe", "schwarz");
+        TestUtil.assertArrayEqualsUnordered(new String[] {}, game.get("card", "Two"));
+    }
+	
+	@Test
+    public void get_withNoCard_giveNothing() throws GameException {
+        TestUtil.assertArrayEqualsUnordered(new String[] {}, game.get("card", "Two"));
+    }
+	
+	@Test
+    public void get_withFalseGameName_giveGame() throws GameException {
+        TestUtil.assertArrayEqualsUnordered(new String[] {"Test"}, game.get("game", "*"));
+		TestUtil.assertArrayEqualsUnordered(new String[] {"Test"}, game.get("game", ""));
+		TestUtil.assertArrayEqualsUnordered(new String[] {"Test"}, game.get("game", "*adf4"));
+    }
+	
+	@Test
+    public void selectBeatingCards_withStringPropertyAndDraw_returnsNoBeatingCards() throws GameException {
+        game.defineCard("Card 1");
+        game.defineCard("Card 2");
+        game.defineCard("Card 3");
+        game.defineCard("Card 4");
+        game.defineCard("Card 5");
+
+        game.defineProperty("color", "string");
+        game.setProperty("Card 1", "color", "red");
+        game.setProperty("Card 2", "color", "blue");
+        game.setProperty("Card 3", "color", "green");
+        game.setProperty("Card 4", "color", "black");
+        game.setProperty("Card 5", "color", "yellow");
+
+        game.defineRule("color", "red", "green");
+        game.defineRule("color", "green", "red");
+		game.defineRule("color", "blue", "black");
+        game.defineRule("color", "black", "blue");
+		game.defineRule("color", "black", "yellow");
+		game.defineRule("color", "yellow", "blue");
+
+        Deck deck = game.createDeck();
+        deck.addCard("Card 1");
+        deck.addCard("Card 2");
+        deck.addCard("Card 3");
+        deck.addCard("Card 4");
+        deck.addCard("Card 5");
+
+        TestUtil.assertArrayEqualsUnordered(new String[]{}, deck.selectBeatingCards("Card 2"));
+		TestUtil.assertArrayEqualsUnordered(new String[]{"Card 4"}, deck.selectBeatingCards("Card 5"));
+		TestUtil.assertArrayEqualsUnordered(new String[]{}, deck.selectBeatingCards("Card 1"));
     }
 	
 /*	@Test

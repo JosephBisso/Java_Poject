@@ -242,6 +242,19 @@ public class MyGame implements Game {
 *	@param value gewünscht 
 */	
     public void setProperty(String cardName, String propertyName, String value) throws GameException {
+		boolean found = false;
+		if (property == null) {
+			throw new GameException("Es kann keine Eigenschaft gesetzt werden, ohne zuvor eine Eigenschaft zu definieren");
+		}
+		for (Eigenschaft eigenschaft : property) {
+			if (eigenschaft.getName().equals(propertyName)) {
+				found = true;
+			}
+		}
+		if (!found) {
+			throw new GameException("Die Eigenschaft wurde noch nicht gefunden");
+		}
+	
 		for (int i = 0; i < anzProperty; i++) {
 			if (property[i].getName().equals(propertyName) && !property[i].getTyp().equals("string")) {
 				throw new GameException("Der eingegebene Wert passt nicht zum Typ der eingegebenen Eigenschaft");
@@ -372,6 +385,24 @@ public class MyGame implements Game {
 		
 					rule[anzRule - 1] = new Regel(propertyName, operation);
 					property[i].setRegel(rule[anzRule - 1]);
+					
+					if (card != null) {
+						for (Karte karte : card) {
+							if (karte.getProperty() != null) {
+								for (Eigenschaft eigenschaft : karte.getProperty()) {
+									if (eigenschaft.getName().equals(propertyName)) {
+										if (karte.getValue() != null) {
+											for (String wert : karte.getValue()) {
+												if (wert.equals(operation)) {
+													eigenschaft.setRegel(rule[anzRule - 1]);
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
 				} else {
 					throw new GameException("Für diese Eigenschaft muss Gewinner und Verlierer angegeben werden");
 				}
@@ -386,28 +417,6 @@ public class MyGame implements Game {
     public void defineRule(String propertyName, String winningName, String losingName) throws GameException {
 		if (winningName.equals(losingName)) {
 			throw new GameException("Ein Karte kann sich nicht selbst schlagen");
-		}
-		
-		if (card != null) {
-			int counterCard = 0,
-				counterStringCard = 0;
-			for (Karte karte : card) {
-				counterCard++;
-				if (karte.getProperty() != null) {
-					for (Eigenschaft eigenschaft : karte.getProperty()) {
-						if (eigenschaft.getRegel() != null) {
-							for (Regel regel : eigenschaft.getRegel()) {
-								if (regel.istString()) {
-									counterStringCard--;
-								}
-							}
-						}
-					}
-				}
-			}
-			if (counterCard > 2 && counterCard == counterStringCard) {
-				throw new GameException("Es können auch nur fur einen Teil der Karten String-Regeln angelegt werden");
-			}
 		}
 		
  		for (int i = 0; i < anzProperty; i++) {
@@ -442,8 +451,55 @@ public class MyGame implements Game {
 		
 				rule[anzRule - 1] = new Regel(propertyName, winningName, losingName);
 				property[i].setRegel(rule[anzRule - 1]);
+				
+				if (card != null) {
+					for (Karte karte : card) {
+						if (karte.getProperty() != null) {
+							for (Eigenschaft eigenschaft : karte.getProperty()) {
+								if (eigenschaft.getName().equals(propertyName)) {
+									if (karte.getValue() != null) {
+										for (String wert : karte.getValue()) {
+											if (wert.equals(winningName) || wert.equals(losingName)) {
+												eigenschaft.setRegel(rule[anzRule - 1]);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}	
 		}
+/*		
+		if (card != null) {
+			int counterCard = 0,
+				counterStringCard = 0;
+			for (Karte karte : card) {
+				counterCard++;
+				if (karte.getProperty() != null) {
+					if (karte.getValue() != null) {
+						for (String wert : karte.getValue()) {
+							if (wert.equals(winningName) || wert.equals(losingName)) {
+								for (Eigenschaft eigenschaft : karte.getProperty()) {
+									if (eigenschaft.getRegel() != null) {
+										for (Regel regel : eigenschaft.getRegel()) {
+											if (regel.istString()) {
+												counterStringCard++;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if (counterCard > 2 && counterCard == counterStringCard) {
+				throw new GameException("Es können auch nur fur einen Teil der Karten String-Regeln angelegt werden");
+			}
+		}
+*/		
 	}
 
 /** @param type gewünscht.
