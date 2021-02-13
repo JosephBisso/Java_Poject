@@ -47,6 +47,9 @@ public class MyGame implements Game {
 */	
 	public MyGame(String name) throws GameException {
 		this.name = name;
+		card = new Karte[0];
+		property = new Eigenschaft[0];
+		rule = new Regel[0];
     }
 
 /** @param path gewünscht.
