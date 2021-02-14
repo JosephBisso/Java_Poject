@@ -246,7 +246,7 @@ public class MyGame implements Game {
 */	
     public void setProperty(String cardName, String propertyName, String value) throws GameException {
 		boolean found = false;
-		if (property == null) {
+		if (property == null || anzProperty == 0) {
 			throw new GameException("Es kann keine Eigenschaft gesetzt werden, ohne zuvor eine Eigenschaft zu definieren");
 		}
 		for (Eigenschaft eigenschaft : property) {
@@ -263,6 +263,9 @@ public class MyGame implements Game {
 				throw new GameException("Der eingegebene Wert passt nicht zum Typ der eingegebenen Eigenschaft");
 
 			}
+		}
+		if (card == null || anzCard == 0) {
+			throw new GameException("Es gibt noch keine einzige definierte Karte");
 		}
 		boolean keineKarte = false;
 		for (Karte karte : card) {
@@ -301,7 +304,7 @@ public class MyGame implements Game {
 */	
     public void setProperty(String cardName, String propertyName, int value) throws GameException {
 		boolean found = false;
-		if (property == null) {
+		if (property == null || anzProperty == 0) {
 			throw new GameException("Es kann keine Eigenschaft gesetzt werden, ohne zuvor eine Eigenschaft zu definieren");
 		}
 		for (Eigenschaft eigenschaft : property) {
@@ -318,6 +321,9 @@ public class MyGame implements Game {
 				throw new GameException("Der eingegebene Wert passt nicht zum Typ der eingegebenen Eigenschaft");
 
 			}
+		}
+		if (card == null || anzCard == 0) {
+			throw new GameException("Es gibt noch keine einzige definierte Karte");
 		}
 		boolean keineKarte = false;
 		for (Karte karte : card) {
@@ -348,7 +354,7 @@ public class MyGame implements Game {
 */
     public void defineRule(String propertyName, String operation) throws GameException {
 		boolean found = false;
-		if (property == null) {
+		if (property == null || anzProperty == 0) {
 			throw new GameException("Es kann keine Regel angelegt werde, ohne zuvor eine Eigenschaft zu definieren");
 		}
 		for (Eigenschaft eigenschaft : property) {
@@ -422,6 +428,9 @@ public class MyGame implements Game {
 			throw new GameException("Ein Karte kann sich nicht selbst schlagen");
 		}
 		
+		if (property == null || anzProperty == 0) {
+			throw new GameException("Es kann keine Regel angelegt werde, ohne zuvor eine Eigenschaft zu definieren");
+		}
  		for (int i = 0; i < anzProperty; i++) {
 			if (property[i].getName().equals(propertyName)) {
 				if (!property[i].getTyp().equals("string")) {

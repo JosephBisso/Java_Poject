@@ -82,7 +82,7 @@ public class Regel  {
 		istString = true;
 	}
 
-/** @return die regel als Sprint.
+/** @return die regel als Sprint. 
 */	
 	public String[] printRegel() {
 		String[] stringReturn = new String[1];

@@ -41,7 +41,7 @@ public class KartenDeck implements Deck {
 */	
 	public void addCard(String cardName) throws GameException {
 		boolean found = false;
-		if (myGame.getCard() == null) {
+		if (myGame.getCard() == null || myGame.getCard().length == 0) {
 			throw new GameException("Das Spiel enthält keine im Deck verwendbare Karten");
 		}
 		for (int i = 0; i < myGame.getCard().length; i++) {
@@ -89,6 +89,9 @@ public class KartenDeck implements Deck {
 		String stringReturn = "";
 		boolean found = false,
 				foundProperty = false;
+		if (myGame.getProperty() == null || myGame.getProperty().length == 0) {
+			return new String[0];
+		}
 				
 		for (Eigenschaft eigenschaft : myGame.getProperty()) {
 			if (eigenschaft.getName().equals(propertyName)) {
@@ -112,7 +115,7 @@ public class KartenDeck implements Deck {
 			}
 		}
 		if (!foundProperty) {
-			throw new GameException("Diese Eigenschaft wurde im Spiel (noch) nicht definiert");
+			return new String[0];
 		}
 		if (!found) {
 			return new String[0];
@@ -129,7 +132,10 @@ public class KartenDeck implements Deck {
 		String stringReturn = "";
 		boolean found = false,
 				foundProperty = false;
-				
+		
+		if (myGame.getProperty() == null || myGame.getProperty().length == 0) {
+			return new String[0];
+		}
 		for (Eigenschaft eigenschaft : myGame.getProperty()) {
 			if (eigenschaft.getName().equals(propertyName)) {
 				foundProperty = true;
@@ -152,7 +158,7 @@ public class KartenDeck implements Deck {
 			}
 		}
 		if (!foundProperty) {
-			throw new GameException("Diese Eigenschaft wurde im Spiel (noch) nicht definiert");
+			return new String[0];
 		}
 		if (!found) {
 			return new String[0];
@@ -165,13 +171,13 @@ public class KartenDeck implements Deck {
 *	@return gewünscht card
 */
     public String[] selectBeatingCards(String opponentCard) throws GameException {
-		if (myGame.getRule() == null) {
+		if (myGame.getRule() == null || myGame.getRule().length == 0) {
 			throw new GameException("Es sind noch keine Regeln vorhanden");
 		}
 		if (opponentCard.isEmpty()) {
 			throw new GameException("Es ist keine zu schlagende karte eigegebene worden");
 		}
-		if (myGame.getCard() == null) {
+		if (myGame.getCard() == null || myGame.getCard().length == 0) {
 			throw new GameException("Es sind kein Karte im Spiel definiert worden");
 		}
 		int counter = 0;
