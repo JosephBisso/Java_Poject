@@ -158,7 +158,7 @@ public class KartenDeck implements Deck {
 			}
 		}
 		if (!foundProperty) {
-			return new String[0];
+			throw new GameException("Diese Eigenschaft wurde nicht definiert");
 		}
 		if (!found) {
 			return new String[0];
@@ -172,7 +172,10 @@ public class KartenDeck implements Deck {
 */
     public String[] selectBeatingCards(String opponentCard) throws GameException {
 		if (myGame.getRule() == null || myGame.getRule().length == 0) {
-			throw new GameException("Es sind noch keine Regeln vorhanden");
+			return new String[0];
+		}
+		if (myGame.getProperty() == null || myGame.getProperty().length == 0) {
+			return new String[0];
 		}
 		if (opponentCard.isEmpty()) {
 			throw new GameException("Es ist keine zu schlagende karte eigegebene worden");
