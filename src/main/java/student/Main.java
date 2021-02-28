@@ -167,11 +167,11 @@ public class Main {
      */
     private static boolean hasBeenTamperedWith() {
         String[] files =  {"./build.gradle",
-                "./src/main/java/ias/Deck.java",
-                "./src/main/java/ias/Factory.java",
-                "./src/main/java/ias/Game.java",
-                "./src/main/java/ias/GameException.java",
-                "./src/test/java/ias/TestUtil.java"};
+            "./src/main/java/ias/Deck.java",
+            "./src/main/java/ias/Factory.java",
+            "./src/main/java/ias/Game.java",
+            "./src/main/java/ias/GameException.java",
+            "./src/test/java/ias/TestUtil.java"};
 
         long result = 0;
         for (String file : files) {

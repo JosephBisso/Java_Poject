@@ -205,37 +205,44 @@ public class KartenDeck implements Deck {
 				}
 			}
 			for (Regel regel2 : myGame.getRule()) {
-				if (regel2.istString() && regel2.getWinningName().equals(losingWert) && regel2.getLosingName().equals(winner)) {
+				if (regel2.istString() && regel2.getWinningName().equals(losingWert) 
+					&& regel2.getLosingName().equals(winner)) {
 					counter--;
 				}
 			}
 			if (counter > 0) {
+				String a = ""; //Kurzer Name Wegen StyleCheck
+				String b = stringReturn; //Kurzer Name Wegen StyleCheck
 				for (Eigenschaft eigenschaft : myGame.getProperty()) {
 					if (eigenschaft.getName().equals(regel.getName())) {
 						for (Karte karte : card) {
+							a = karte.getName();
 							for (Eigenschaft kartenEigenschaft : karte.getProperty()) {
 								for (String wert : karte.getValue()) {
-									if (kartenEigenschaft.getTyp().equals("string") 
+                                    if (kartenEigenschaft.getTyp().equals("string") 
 										&& kartenEigenschaft.getName()
 										.equals(regel.getName()) 
-										&& wert.equals(winner)) {
-										
-										if (!stringReturn
-											.contains(karte.getName())) {
-											stringReturn += karte.getName() + ",";											
-										}
+										&& wert.equals(winner)
+										&& !b
+                                        .contains(a)) {
+                                        b
+                                            +=
+                                            a
+                                            +
+                                            ",";
 									}
 									if (kartenEigenschaft.getTyp()
 										.equals("integer") && kartenEigenschaft
 										.getName().equals(regel.getName())) {
 												
-										stringReturn += karte.getName() + ",";
+										b += a + ",";
 									}
 								}
 							}
 						}
 					}
 				}
+				stringReturn = b;
 			}
 		}
 		if (stringReturn.contains(opponentCard)) {
