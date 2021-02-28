@@ -183,35 +183,7 @@ public class MyGameTestPublic {
     }
 	
 /*	@Test
-    public void saveToFile_withMultipleCardPropertiesWithoutValues_writesAllCardProperties() throws GameException, IOException {
-        game.defineCard("Arbor Elf");
-        game.defineCard("Realm Cloaked Giant");
-        game.defineProperty("height", "integer");
-        game.defineProperty("race", "string");
-		game.defineRule("height", ">");
-		game.defineRule("race", "rot", "gelb");
-        game.setProperty("Arbor Elf", "race", "elf");
-        game.setProperty("Realm Cloaked Giant", "race", "giant");
-        game.setProperty("Arbor Elf", "height", 4);
-        game.setProperty("Realm Cloaked Giant", "height", 9000);
-
-        File targetFile = new File("C:\\Users\\bisso\\Downloads\\Test.game");
-        game.saveToFile("C:\\Users\\bisso\\Downloads\\Test.game");
-        String file = Files.readString(targetFile.toPath());
-        assertTrue(file.contains("CardProperty: Arbor Elf | race |"));
-        assertTrue(file.contains("CardProperty: Arbor Elf | height |"));
-        assertTrue(file.contains("CardProperty: Realm Cloaked Giant | race |"));
-        assertTrue(file.contains("CardProperty: Realm Cloaked Giant | height |"));
-    }
 	
-	@Test
-    public void saveToFile_withTestGame_savedFileCanBeLoadedAgain() throws GameException {
-        game = Factory.loadGame("C:\\Users\\bisso\\Downloads\\Test.game");
-        File targetFile = new File("C:\\Users\\bisso\\Downloads\\SaveLoadTest.game");
-        game.saveToFile("C:\\Users\\bisso\\Downloads\\SaveLoadTest.game");
-        //This does not check for correctness, only consistency
-        assertNotNull(Factory.loadGame(targetFile.getAbsolutePath()));
-    }
 */	
 	@Test
     public void loadGame_withBasicFile_throwsAfterDefine() throws GameException {
